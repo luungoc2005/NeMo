@@ -17,7 +17,8 @@ from .data import *
 from .huggingface import *
 from .modules import *
 from .transformer import *
-
+from .utils.callbacks import *
+from .utils.metrics import *
 
 import nemo
 
