@@ -159,7 +159,13 @@ class BertPretrainingDataset(Dataset):
                 # Read line, remove newline, and decode as UTF8
                 doc_text = f.readline()[:-1].decode("utf-8", errors="ignore")
                 document = [self.tokenizer.token_to_id("[CLS]")]
-                document.extend(self.tokenizer.text_to_ids(doc_text))
+
+                token_ids = self.tokenizer.text_to_ids(doc_text)
+                if len(token_ids) < self.max_seq_length:
+                    document.extend(token_ids)
+                else:
+                    document.extend(token_ids[:self.max_seq_length - 2])
+
                 document.append(self.tokenizer.token_to_id("[SEP]"))
 
             assert len(document) >= self.max_seq_length
