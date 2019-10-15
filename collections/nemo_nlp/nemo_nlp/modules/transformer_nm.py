@@ -5,7 +5,8 @@ This package contains Transformer for translation Neural Module
 __all__ = ['TransformerEncoderNM',
            'TransformerDecoderNM',
            'GreedyLanguageGeneratorNM',
-           'BeamSearchTranslatorNM']
+           'BeamSearchTranslatorNM',
+           'TransformerLogSoftmaxNM']
 
 import math
 
@@ -16,7 +17,8 @@ from ..transformer import (TransformerEmbedding,
                            TransformerEncoder,
                            TransformerDecoder,
                            GreedySequenceGenerator,
-                           BeamSearchSequenceGenerator)
+                           BeamSearchSequenceGenerator,
+                           TransformerLogSoftmax)
 from ..transformer.utils import transformer_weights_init
 
 
