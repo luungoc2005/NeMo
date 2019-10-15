@@ -358,3 +358,40 @@ class BeamSearchTranslatorNM(TrainableNM):
         output_ids = self.generator(encoder_hidden_states=hidden_states_src,
                                     encoder_input_mask=input_mask_src)
         return output_ids
+
+
+class TransformerLogSoftmaxNM(TrainableNM):
+    @staticmethod
+    def create_ports():
+        input_ports = {
+            "hidden_states":
+            NeuralType({
+                0: AxisType(BatchTag),
+                1: AxisType(TimeTag),
+                2: AxisType(ChannelTag)
+            }),
+        }
+
+        output_ports = {
+            "log_probs":
+            NeuralType({
+                0: AxisType(BatchTag),
+                1: AxisType(TimeTag),
+                2: AxisType(ChannelTag)
+            }),
+        }
+        return input_ports, output_ports
+
+    def __init__(self, *, vocab_size, d_model, **kwargs):
+        TrainableNM.__init__(self, **kwargs)
+
+        self.log_softmax = TransformerLogSoftmax(
+            vocab_size=vocab_size,
+            hidden_size=d_model)
+
+        self.log_softmax.apply(transformer_weights_init)
+        self.log_softmax.to(self._device)
+
+    def forward(self, hidden_states):
+        log_probs = self.log_softmax(hidden_states)
+        return log_probs
