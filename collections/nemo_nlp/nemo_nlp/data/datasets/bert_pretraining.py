@@ -71,9 +71,9 @@ class BertPretrainingDataset(Dataset):
                         num_tokens = len(line.split())
 
                         # Ensure the line has at least max_length tokens
-                        if num_tokens >= max_length:
-                            yield start - 1
-                            used_tokens += num_tokens
+                        # if num_tokens >= max_length:
+                        yield start - 1
+                        used_tokens += num_tokens
 
                         total_tokens += num_tokens
                         start = new_start + 1
