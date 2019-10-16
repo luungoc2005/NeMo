@@ -305,7 +305,7 @@ class BertIntermediate(nn.Module):
 class BertOutput(nn.Module):
     def __init__(self, config):
         super(BertOutput, self).__init__()
-        self.dense = nn.Linear(config.intermediate_size, config.intermediate_size)
+        self.dense = nn.Linear(config.feedforward_size, config.intermediate_size)
         self.LayerNorm = BertLayerNorm(config.intermediate_size, eps=config.layer_norm_eps)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
 
