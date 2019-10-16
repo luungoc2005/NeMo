@@ -141,10 +141,6 @@ class BertPretrainingDataset(Dataset):
         seq_length = self.max_length - num_special_tokens
         min_doc_length = 16
 
-        a_length = random.randrange(min_doc_length,
-                                    seq_length - min_doc_length + 1)
-        b_length = seq_length - a_length
-
         a_filename = random.choice(self.filenames)
         a_line = random.choice(self.sentence_indices[a_filename])
 
@@ -173,26 +169,20 @@ class BertPretrainingDataset(Dataset):
             # 50% of the time, B is the sentence that follows A
             label = 1
 
-            a_start_idx = random.randrange(len(a_document) - seq_length)
-            b_start_idx = a_start_idx + a_length
-
             b_filename = a_filename
-            b_line = a_line
-            b_document = a_document
+            b_line = min(a_line + 1, len(self.sentence_indices[a_filename]) - 1)
+            b_document = get_document(a_document, b_line)
         else:
-            # The rest of the time, B is a random sentence from the corpus
+            # The rest of the time, B is the previous sentence
             label = 0
 
-            a_start_idx = random.randrange(len(a_document) - a_length)
-
-            b_filename = random.choice(self.filenames)
-            b_line = random.choice(self.sentence_indices[b_filename])
+            b_filename = a_filename
+            b_line = max(a_line - 1, 0)
             b_document = get_document(b_filename, b_line)
-            b_start_idx = random.randrange(len(b_document) - b_length)
 
         # Process retrieved documents for use in training
-        a_ids = a_document[a_start_idx:a_start_idx + a_length]
-        b_ids = b_document[b_start_idx:b_start_idx + b_length]
+        a_ids = a_document
+        b_ids = b_document
 
         output_ids = [self.tokenizer.special_tokens["[CLS]"]] + a_ids + \
                      [self.tokenizer.special_tokens["[SEP]"]] + b_ids + \
