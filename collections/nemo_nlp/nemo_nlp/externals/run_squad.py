@@ -35,7 +35,7 @@ from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
 
 from transformers.file_utils import PYTORCH_PRETRAINED_BERT_CACHE
-from transformers.modeling_utils import WEIGHTS_NAME, CONFIG_NAME
+# from transformers.modeling_utils import WEIGHTS_NAME, CONFIG_NAME
 from transformers.modeling_bert import BertForQuestionAnswering, BertConfig
 from transformers.optimization import AdamW, WarmupLinearSchedule
 from transformers.tokenization_bert import (BasicTokenizer,
@@ -49,6 +49,9 @@ else:
 
 logger = logging.getLogger(__name__)
 
+# monkey patching
+WEIGHTS_NAME = 'bert_weights'
+CONFIG_NAME = 'bert_config'
 
 class SquadExample(object):
     """
