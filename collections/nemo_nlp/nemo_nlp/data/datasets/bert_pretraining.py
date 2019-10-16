@@ -208,8 +208,12 @@ class BertPretrainingDataset(Dataset):
         output_ids = pad_to_length(output_ids, self.max_length)
         output_mask = pad_to_length(output_ids, self.max_length)
 
-        return np.array(input_ids), input_type_ids, input_mask, \
-            np.array(output_ids), output_mask, label
+        return np.array(input_ids, dtype=np.int), \
+            np.array(input_type_ids, dtype=np.int), \
+            np.array(input_mask, dtype=np.float32), \
+            np.array(output_ids, dtype=np.int), \
+            np.array(output_mask, dtype=np.float32), \
+            label
 
     def mask_ids(self, ids):
         """
