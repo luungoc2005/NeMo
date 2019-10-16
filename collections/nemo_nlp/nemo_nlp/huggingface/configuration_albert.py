@@ -91,7 +91,7 @@ class AlBertConfig(PretrainedConfig):
                  initializer_range=0.02,
                  layer_norm_eps=1e-12,
                  **kwargs):
-        super(BertConfig, self).__init__(**kwargs)
+        super(AlBertConfig, self).__init__(**kwargs)
         if isinstance(vocab_size_or_config_json_file, str) or (sys.version_info[0] == 2
                         and isinstance(vocab_size_or_config_json_file, unicode)):
             with open(vocab_size_or_config_json_file, "r", encoding='utf-8') as reader:
