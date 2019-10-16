@@ -42,7 +42,7 @@ class BertPretrainingDataset(Dataset):
         # from main memory when needed during training.
 
         if sentence_idx_file is None:
-            data_dir = dataset[:dataset.rfind('/')]
+            data_dir = dataset[:dataset.rfind('/')] if '/' in dataset else '.'
             mode = dataset[dataset.rfind('/')+1:dataset.rfind('.')]
             sentence_idx_file = f"{data_dir}/{mode}_sentence_indices.pkl"
 
