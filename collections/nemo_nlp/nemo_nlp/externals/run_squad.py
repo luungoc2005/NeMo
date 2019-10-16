@@ -34,11 +34,11 @@ from torch.utils.data import (DataLoader, RandomSampler, SequentialSampler,
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
 
-from pytorch_transformers.file_utils import PYTORCH_PRETRAINED_BERT_CACHE
-from pytorch_transformers.modeling_utils import WEIGHTS_NAME, CONFIG_NAME
-from pytorch_transformers.modeling_bert import BertForQuestionAnswering, BertConfig
-from pytorch_transformers.optimization import AdamW, WarmupLinearSchedule
-from pytorch_transformers.tokenization_bert import (BasicTokenizer,
+from transformers.file_utils import PYTORCH_PRETRAINED_BERT_CACHE
+from transformers.modeling_utils import WEIGHTS_NAME, CONFIG_NAME
+from transformers.modeling_bert import BertForQuestionAnswering, BertConfig
+from transformers.optimization import AdamW, WarmupLinearSchedule
+from transformers.tokenization_bert import (BasicTokenizer,
                                                     BertTokenizer,
                                                     whitespace_tokenize)
 

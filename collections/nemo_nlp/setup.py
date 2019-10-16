@@ -24,7 +24,7 @@ setuptools.setup(
         'sentencepiece',
         'boto3',
         'unidecode',
-        'pytorch-transformers',
+        'transformers',
         'matplotlib',
         'youtokentome'
     ]

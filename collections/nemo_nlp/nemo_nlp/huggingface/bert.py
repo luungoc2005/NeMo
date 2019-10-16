@@ -1,7 +1,8 @@
 # Copyright (c) 2019 NVIDIA Corporation
 
-from pytorch_transformers import BertConfig, BertModel, \
+from transformers import BertConfig, BertModel, \
     BERT_PRETRAINED_MODEL_ARCHIVE_MAP, BERT_PRETRAINED_CONFIG_ARCHIVE_MAP
+from .albert import AlBertConfig, AlBertModel
 from typing import Optional, List
 from nemo.backends.pytorch.nm import TrainableNM
 from nemo.core.neural_types import AxisType, BatchTag, ChannelTag, \
@@ -63,7 +64,8 @@ class BERT(TrainableNM):
                  hidden_size=768,
                  num_hidden_layers=12,
                  num_attention_heads=12,
-                 intermediate_size=3072,
+                 intermediate_size=768,
+                 feedforward_size=3072,
                  hidden_act="gelu",
                  max_position_embeddings=512,
                  **kwargs):
@@ -86,20 +88,21 @@ class BERT(TrainableNM):
                              + "BERT constructor.")
 
         if vocab_size is not None:
-            config = BertConfig(
+            config = AlBertConfig(
                 vocab_size_or_config_json_file=vocab_size,
                 hidden_size=hidden_size,
                 num_hidden_layers=num_hidden_layers,
                 num_attention_heads=num_attention_heads,
                 intermediate_size=intermediate_size,
+                feedforward_size=feedforward_size,
                 hidden_act=hidden_act,
                 max_position_embeddings=max_position_embeddings)
-            model = BertModel(config)
+            model = AlBertModel(config)
         elif pretrained_model_name is not None:
-            model = BertModel.from_pretrained(pretrained_model_name)
+            model = AlBertModel.from_pretrained(pretrained_model_name)
         elif config_filename is not None:
-            config = BertConfig.from_json_file(config_filename)
-            model = BertModel(config)
+            config = AlBertModel.from_json_file(config_filename)
+            model = AlBertModel(config)
         else:
             raise ValueError("Either pretrained_model_name or vocab_size must"
                              + "be passed into the BERT constructor")
