@@ -210,9 +210,9 @@ class BertPretrainingDataset(Dataset):
 
         return np.array(input_ids, dtype=np.int), \
             np.array(input_type_ids, dtype=np.int), \
-            np.array(input_mask, dtype=np.int), \
+            np.array(input_mask, dtype=np.float32), \
             np.array(output_ids, dtype=np.int), \
-            np.array(output_mask, dtype=np.int), \
+            np.array(output_mask, dtype=np.float32), \
             label
 
     def mask_ids(self, ids):
