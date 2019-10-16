@@ -195,7 +195,7 @@ class BertPretrainingDataset(Dataset):
 
         input_type_ids = np.zeros(self.max_length, dtype=np.int)
 
-        if len(input_ids > self.max_length):
+        if len(input_ids) > self.max_length:
             input_ids = input_ids[:self.max_length]
             output_ids = output_ids[:self.max_length]
             output_mask = output_mask[:self.max_length]
