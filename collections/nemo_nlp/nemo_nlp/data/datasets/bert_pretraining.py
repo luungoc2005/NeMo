@@ -195,12 +195,18 @@ class BertPretrainingDataset(Dataset):
 
         input_type_ids = np.zeros(self.max_length, dtype=np.int)
 
-        if len(input_ids) > self.max_length:
-            input_ids = input_ids[:self.max_length]
-            output_ids = output_ids[:self.max_length]
-            output_mask = output_mask[:self.max_length]
-        else:
-            input_type_ids[a_length + 2:seq_length + 3] = 1
+        def pad_to_length(array, length):
+            result_arr = [0] * length
+            copy_length = min(length, len(array))
+            result_arr[:copy_length] = array[:copy_length]
+            return result_arr
+        
+        input_type_ids[len(a_document) + 2:len(a_document) + len(b_document) + 3] = 1
+
+        input_type_ids = pad_to_length(input_type_ids, self.max_length)
+        input_ids = pad_to_length(input_ids, self.max_length)
+        output_ids = pad_to_length(output_ids, self.max_length)
+        output_mask = pad_to_length(output_ids, self.max_length)
 
         return np.array(input_ids), input_type_ids, input_mask, \
             np.array(output_ids), output_mask, label
