@@ -171,7 +171,7 @@ class BertPretrainingDataset(Dataset):
 
             b_filename = a_filename
             b_line = min(a_line + 1, len(self.sentence_indices[a_filename]) - 1)
-            b_document = get_document(a_document, b_line)
+            b_document = get_document(b_filename, b_line)
         else:
             # The rest of the time, B is the previous sentence
             label = 0
