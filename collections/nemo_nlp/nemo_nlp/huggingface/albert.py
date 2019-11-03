@@ -165,9 +165,9 @@ class BertEmbeddings(nn.Module):
         if token_type_ids is None:
             token_type_ids = torch.zeros_like(input_ids)
 
-        words_embeddings = self.embedding_proj(self.word_embeddings(input_ids))
-        position_embeddings = self.position_embeddings(position_ids)
-        token_type_embeddings = self.token_type_embeddings(token_type_ids)
+        words_embeddings = self.embedding_proj(self.word_embeddings(input_ids.long())).to(dtype=next(self.parameters()).dtype)
+        position_embeddings = self.position_embeddings(position_ids.long()).to(dtype=next(self.parameters()).dtype)
+        token_type_embeddings = self.token_type_embeddings(token_type_ids.long()).to(dtype=next(self.parameters()).dtype)
 
         embeddings = words_embeddings + position_embeddings + token_type_embeddings
         embeddings = self.LayerNorm(embeddings)
@@ -339,7 +339,8 @@ class BertEncoder(nn.Module):
         self.output_hidden_states = config.output_hidden_states
         self.layer = BertLayer(config)
         # self.layers = nn.ModuleList([self.layer for _ in range(config.num_hidden_layers)])
-        self.layers = [self.layer] * config.num_hidden_layers 
+        self.layers = [self.layer] * config.num_hidden_layers
+        self.ff_proj = nn.Linear(config.intermediate_size, config.hidden_size) 
 
     def forward(self, hidden_states, attention_mask=None, head_mask=None):
         all_hidden_states = ()
@@ -358,6 +359,8 @@ class BertEncoder(nn.Module):
         if self.output_hidden_states:
             all_hidden_states = all_hidden_states + (hidden_states,)
 
+        hidden_states = self.ff_proj(hidden_states)
+
         outputs = (hidden_states,)
         if self.output_hidden_states:
             outputs = outputs + (all_hidden_states,)
@@ -369,7 +372,7 @@ class BertEncoder(nn.Module):
 class BertPooler(nn.Module):
     def __init__(self, config):
         super(BertPooler, self).__init__()
-        self.dense = nn.Linear(config.intermediate_size, config.intermediate_size)
+        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
         self.activation = nn.Tanh()
 
     def forward(self, hidden_states):
@@ -384,12 +387,12 @@ class BertPooler(nn.Module):
 class BertPredictionHeadTransform(nn.Module):
     def __init__(self, config):
         super(BertPredictionHeadTransform, self).__init__()
-        self.dense = nn.Linear(config.intermediate_size, config.intermediate_size)
+        self.dense = nn.Linear(config.hidden_size, config.hidden_size)
         if isinstance(config.hidden_act, str) or (sys.version_info[0] == 2 and isinstance(config.hidden_act, unicode)):
             self.transform_act_fn = ACT2FN[config.hidden_act]
         else:
             self.transform_act_fn = config.hidden_act
-        self.LayerNorm = BertLayerNorm(config.intermediate_size, eps=config.layer_norm_eps)
+        self.LayerNorm = BertLayerNorm(config.hidden_size, eps=config.layer_norm_eps)
 
     def forward(self, hidden_states):
         hidden_states = self.dense(hidden_states)
@@ -405,7 +408,6 @@ class BertLMPredictionHead(nn.Module):
 
         # The output weights are the same as the input embeddings, but there is
         # an output-only bias for each token.
-        self.decoder_proj = nn.Linear(config.intermediate_size, config.hidden_size)
         self.decoder = nn.Linear(config.hidden_size,
                                  config.vocab_size,
                                  bias=False)
@@ -414,7 +416,6 @@ class BertLMPredictionHead(nn.Module):
 
     def forward(self, hidden_states):
         hidden_states = self.transform(hidden_states)
-        hidden_states = self.decoder_proj(hidden_states)
         hidden_states = self.decoder(hidden_states) + self.bias
         return hidden_states
 
@@ -432,7 +433,7 @@ class BertOnlyMLMHead(nn.Module):
 class BertOnlyNSPHead(nn.Module):
     def __init__(self, config):
         super(BertOnlyNSPHead, self).__init__()
-        self.seq_relationship = nn.Linear(config.intermediate_size, 2)
+        self.seq_relationship = nn.Linear(config.hidden_size, 2)
 
     def forward(self, pooled_output):
         seq_relationship_score = self.seq_relationship(pooled_output)
