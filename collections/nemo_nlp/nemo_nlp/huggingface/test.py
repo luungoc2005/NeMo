@@ -1,7 +1,8 @@
 from albert import BertForPreTraining
 from configuration_albert import AlBertConfig
+import torch
 
-model = BertForPreTraining({
+model = BertForPreTraining(AlBertConfig(**{
     'vocab_size_or_config_json_file':50,
     'hidden_size':50,
     'num_hidden_layers':50,
@@ -15,7 +16,9 @@ model = BertForPreTraining({
     'type_vocab_size':2,
     'initializer_range':0.02,
     'layer_norm_eps':1e-12,
-})
+}))
 
 print(model)
-print(model(torch.LongTensor([[1, 2, 3, 4, 5, 0, 0, 0, 0, 0]])))
+result = model(torch.LongTensor([[1, 2, 3, 4, 5, 0, 0, 0, 0, 0]]))
+print(result)
+print(result[0].size())

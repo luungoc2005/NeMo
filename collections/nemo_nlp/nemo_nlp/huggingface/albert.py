@@ -29,7 +29,7 @@ from torch import nn
 from torch.nn import CrossEntropyLoss, MSELoss
 
 from transformers.modeling_utils import PreTrainedModel, prune_linear_layer
-from .configuration_albert import AlBertConfig
+from configuration_albert import AlBertConfig
 from transformers.file_utils import add_start_docstrings
 
 logger = logging.getLogger(__name__)
